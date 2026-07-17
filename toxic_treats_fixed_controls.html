@@ -1,0 +1,322 @@
+
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+.wrap {
+  padding: 1.5rem 0 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.25rem;
+  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+.device {
+  width: 320px;
+  height: 240px;
+  border-radius: 10px;
+  overflow: hidden;
+  position: relative;
+  border: 0.5px solid #2a4a2a;
+}
+
+.screen {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.5s ease-in-out;
+}
+
+.screen-welcome {
+  background: radial-gradient(ellipse at 50% 30%, #0e1a0a, #050c04);
+  opacity: 1;
+  gap: 8px;
+}
+.welcome-star  { font-size: 10px; color: #4aff4a; letter-spacing: 6px; }
+.welcome-title { font-size: 19px; font-weight: 800; color: #a0ff40; letter-spacing: 2px; text-transform: uppercase; }
+.welcome-sub   { font-size: 9px; color: #3a6a2a; letter-spacing: 4px; text-transform: uppercase; }
+.welcome-icon  { font-size: 32px; margin: 2px 0; }
+.welcome-btn {
+  margin-top: 8px;
+  padding: 8px 28px;
+  background: #1a4a0a;
+  border-radius: 4px;
+  font-size: 12px;
+  color: #a0ff40;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  cursor: pointer;
+  border: 1px solid #4aaa10;
+  font-weight: 700;
+}
+.welcome-btn:hover { background: #2a6a12; }
+
+.screen-slot {
+  background: radial-gradient(ellipse at 50% 20%, #0a1a06, #030a02);
+  opacity: 0;
+  pointer-events: none;
+  gap: 0;
+}
+
+.slot-header {
+  font-size: 9px; color: #3a7a1a;
+  letter-spacing: 4px; text-transform: uppercase;
+  margin-bottom: 8px;
+}
+.slot-machine {
+  background: #0a140a;
+  border: 2px solid #2a6a10;
+  border-radius: 8px;
+  padding: 10px 12px 12px;
+  box-shadow: inset 0 2px 12px #00000099, 0 0 20px #1aff0a18;
+  transform-origin: center center;
+}
+.reels { display: flex; gap: 6px; margin-bottom: 8px; }
+.reel {
+  width: 52px; height: 52px;
+  background: #050e04;
+  border-radius: 4px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 26px;
+  border: 1px solid #1a4a0a;
+}
+.payline {
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #4aff1a, transparent);
+  margin-bottom: 8px;
+}
+.spin-btn {
+  width: 100%; padding: 8px;
+  background: #0a3a04;
+  border: 1px solid #4aaa10;
+  border-radius: 4px;
+  font-size: 11px; font-weight: 800;
+  color: #a0ff40; letter-spacing: 3px; text-transform: uppercase;
+  cursor: pointer;
+}
+.spin-btn:hover  { background: #124a08; }
+.spin-btn:active { opacity: 0.8; }
+
+.back-link {
+  margin-top: 10px; font-size: 10px;
+  color: #2a4a1a; cursor: pointer; letter-spacing: 1px;
+}
+.back-link:hover { color: #4a7a2a; }
+
+/* Entrance */
+@keyframes springIn   { 0% { opacity:0; transform:scale(0.6) } 60% { opacity:1; transform:scale(1.06) } 80% { transform:scale(0.97) } 100% { opacity:1; transform:scale(1) } }
+@keyframes springUp   { 0% { opacity:0; transform:translateY(-12px) } 60% { opacity:1; transform:translateY(3px) } 100% { opacity:1; transform:translateY(0) } }
+@keyframes springReel { 0% { opacity:0; transform:translateY(18px) scale(0.8) } 55% { opacity:1; transform:translateY(-4px) scale(1.05) } 80% { transform:translateY(2px) scale(0.98) } 100% { opacity:1; transform:scale(1) } }
+@keyframes fadeSlide  { 0% { opacity:0; transform:scale(0.9) } 100% { opacity:1; transform:scale(1) } }
+@keyframes fadeIn     { 0% { opacity:0 } 100% { opacity:1 } }
+
+@keyframes spinZoom {
+  0%   { transform: scale(1); }
+  25%  { transform: scale(1.09); }
+  55%  { transform: scale(0.97); }
+  75%  { transform: scale(1.03); }
+  100% { transform: scale(1); }
+}
+@keyframes reelRoll {
+  0%   { transform: translateY(0);    filter: blur(0); }
+  25%  { transform: translateY(-5px); filter: blur(2px); }
+  50%  { transform: translateY(0);    filter: blur(3px); }
+  75%  { transform: translateY(4px);  filter: blur(1px); }
+  100% { transform: translateY(0);    filter: blur(0); }
+}
+
+/* ── Controls — всегда видимые ── */
+.controls {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.dur-label {
+  font-size: 13px;
+  color: #ccc;
+  font-weight: 500;
+}
+.controls select {
+  background: #2a2a2a;
+  border: 1px solid #555;
+  color: #fff;
+  border-radius: 6px;
+  padding: 6px 10px;
+  font-size: 13px;
+  cursor: pointer;
+  outline: none;
+}
+.controls select:hover { border-color: #888; }
+
+.badge {
+  display: flex; gap: 6px;
+  font-size: 11px; align-items: center;
+}
+.badge span {
+  background: #1e1e1e;
+  border: 1px solid #3a3a3a;
+  color: #7adb7a;
+  border-radius: 4px;
+  padding: 3px 8px;
+  font-family: monospace;
+}
+</style>
+
+<div class="wrap">
+  <div class="device">
+    <div class="screen screen-welcome" id="welcome">
+      <div class="welcome-star">☠ ☠ ☠</div>
+      <div class="welcome-icon">🍬💀🍭</div>
+      <div class="welcome-title">Toxic Treats</div>
+      <div class="welcome-sub">Danger Slots</div>
+      <button class="welcome-btn" id="play-btn">Play now</button>
+    </div>
+
+    <div class="screen screen-slot" id="slot">
+      <div class="slot-header" id="el-header" style="opacity:0">Toxic Treats</div>
+      <div class="slot-machine" id="el-machine" style="opacity:0">
+        <div class="reels">
+          <div class="reel" id="r1" style="opacity:0">🍬</div>
+          <div class="reel" id="r2" style="opacity:0">💀</div>
+          <div class="reel" id="r3" style="opacity:0">🍭</div>
+        </div>
+        <div class="payline" id="el-payline" style="opacity:0"></div>
+        <button class="spin-btn" id="el-spin" style="opacity:0">S P I N</button>
+      </div>
+      <div class="back-link" id="back-btn" style="opacity:0">← Welcome</div>
+    </div>
+  </div>
+
+  <div class="controls">
+    <span class="dur-label">Зум</span>
+    <select id="intensity">
+      <option value="soft">Мягкий</option>
+      <option value="normal" selected>Нормальный</option>
+      <option value="punchy">Резкий</option>
+    </select>
+  </div>
+
+  <div class="badge">
+    <span>scale 1 → 1.09 → 1</span>
+    <span>zoom on spin</span>
+  </div>
+</div>
+
+<script>
+const welcome    = document.getElementById('welcome');
+const slot       = document.getElementById('slot');
+const playBtn    = document.getElementById('play-btn');
+const backBtn    = document.getElementById('back-btn');
+const elHeader   = document.getElementById('el-header');
+const elMachine  = document.getElementById('el-machine');
+const r1 = document.getElementById('r1');
+const r2 = document.getElementById('r2');
+const r3 = document.getElementById('r3');
+const elPayline  = document.getElementById('el-payline');
+const elSpin     = document.getElementById('el-spin');
+const intensityEl = document.getElementById('intensity');
+
+let isSlot = false, running = false, spinning = false;
+const symbols = ['🍬','💀','🍭','🧪','☠️','🍫','💚','🌟','🍏','🔮'];
+function rand(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
+
+function lockAndClear(el, opacity, transform) {
+  el.style.opacity   = opacity;
+  el.style.transform = transform || '';
+  el.style.filter    = '';
+  el.style.animation = 'none';
+  void el.offsetWidth;
+}
+
+function resetAll() {
+  [elHeader, elMachine, r1, r2, r3, elPayline, elSpin, backBtn]
+    .forEach(el => lockAndClear(el, '0', ''));
+}
+
+function animateIn() {
+  function go(el, kf, dur, delay) {
+    el.style.animation = 'none';
+    void el.offsetWidth;
+    el.style.animation = `${kf} ${dur}ms cubic-bezier(.34,1.4,.64,1) ${delay}ms forwards`;
+  }
+  const s = 80;
+  go(elHeader,  'springUp',   420,  0);
+  go(elMachine, 'springIn',   600,  s);
+  go(r1,        'springReel', 480,  s*3);
+  go(r2,        'springReel', 480,  s*4.5);
+  go(r3,        'springReel', 480,  s*6);
+  go(elPayline, 'fadeIn',     300,  s*7);
+  go(elSpin,    'fadeSlide',  360,  s*8);
+  go(backBtn,   'fadeIn',     240,  s*10);
+}
+
+function goToSlot() {
+  if (isSlot || running) return;
+  running = true; isSlot = true;
+  welcome.style.opacity = '0';
+  welcome.style.pointerEvents = 'none';
+  setTimeout(() => {
+    slot.style.opacity = '1';
+    slot.style.pointerEvents = 'auto';
+    resetAll();
+    void slot.offsetWidth;
+    animateIn();
+    running = false;
+  }, 500);
+}
+
+function goToWelcome() {
+  if (!isSlot || running) return;
+  running = true; isSlot = false;
+  slot.style.opacity = '0';
+  slot.style.pointerEvents = 'none';
+  setTimeout(() => {
+    welcome.style.opacity = '1';
+    welcome.style.pointerEvents = 'auto';
+    resetAll();
+    running = false;
+  }, 500);
+}
+
+function doSpin() {
+  if (spinning) return;
+  spinning = true;
+
+  const preset = intensityEl.value;
+  const dur = { soft: 450, normal: 550, punchy: 380 }[preset];
+  const ease = {
+    soft:   'cubic-bezier(.34,1.2,.64,1)',
+    normal: 'cubic-bezier(.34,1.4,.64,1)',
+    punchy: 'cubic-bezier(.2,1.6,.4,1)'
+  }[preset];
+
+  lockAndClear(elMachine, '1', 'scale(1)');
+  elMachine.style.animation = `spinZoom ${dur}ms ${ease} forwards`;
+
+  [r1, r2, r3].forEach((r, i) => {
+    lockAndClear(r, '1', 'translateY(0)');
+    r.style.animation = `reelRoll ${dur * 0.8}ms ease-in-out ${i * 70}ms forwards`;
+  });
+
+  setTimeout(() => {
+    r1.textContent = rand(symbols);
+    r2.textContent = rand(symbols);
+    r3.textContent = rand(symbols);
+  }, dur * 0.4);
+
+  setTimeout(() => {
+    lockAndClear(elMachine, '1', 'scale(1)');
+    [r1, r2, r3].forEach(r => lockAndClear(r, '1', ''));
+    spinning = false;
+  }, dur + 120);
+}
+
+playBtn.addEventListener('click', goToSlot);
+backBtn.addEventListener('click', goToWelcome);
+elSpin.addEventListener('click', doSpin);
+</script>
